@@ -1,71 +1,39 @@
 package org.shuai.core;
 
+import lombok.SneakyThrows;
+
 /**
  * @author Yangs
  */
 public class Client {
 
-    /**
-     * 修饰代码块
-     * */
-    public void doRunOne() {
+    @SneakyThrows
+    public void doSynchronizedCode() {
         synchronized (this) {
-            System.out.println("开始执行doRunOne...");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println("结束执行doRunOne...");
+            System.out.println("synchronized同步代码块方法开始执行, 线程：" + Thread.currentThread().getName());
+            Thread.sleep(1000);
+            System.out.println("synchronized同步代码块方法执行完成, 线程：" + Thread.currentThread().getName());
         }
+    }
+
+    @SneakyThrows
+    public synchronized void doSynchronizedMethod() {
+        System.out.println("synchronized同步非静态方法开始执行, 线程：" + Thread.currentThread().getName());
+        Thread.sleep(1000);
+        System.out.println("synchronized同步非静态方法执行完成, 线程：" + Thread.currentThread().getName());
+    }
+
+    @SneakyThrows
+    public synchronized static void doSynchronizedStaticMethod() {
+        System.out.println("synchronized同步静态方法执行完成, 线程：" + Thread.currentThread().getName());
+        Thread.sleep(1000);
+        System.out.println("synchronized同步静态方法执行完成, 线程：" + Thread.currentThread().getName());
     }
 
     /**
-     * 修饰非静态方法
+     * 为了模拟创建对象, 用这个方法包装下静态方法
      * */
-    public synchronized void doRunTwo() {
-        System.out.println("开始执行doRunTwo...");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("结束执行doRunTwo...");
-    }
-
-    /**
-     * 修饰静态方法
-     * */
-    public synchronized static void doRunThree() {
-        System.out.println("开始执行doRunThree...");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("结束执行doRunThree...");
-    }
-
-    /**
-     * 修饰静态方法
-     * */
-    public synchronized static void doRunFive() {
-        System.out.println("开始执行doRunFive...");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("结束执行doRunFive...");
-    }
-
-    public void doRunFour() {
-        System.out.println("开始执行doRunFour...");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("结束执行doRunFour...");
+    public void executeSynchronizedStaticMethod() {
+        doSynchronizedStaticMethod();
     }
 }

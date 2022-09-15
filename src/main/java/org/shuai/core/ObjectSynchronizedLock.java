@@ -7,87 +7,85 @@ public class ObjectSynchronizedLock {
 
     public static void main(String[] args) {
         ObjectSynchronizedLock synchronizedLock = new ObjectSynchronizedLock();
-        synchronizedLock.executeFiveSameObject();
+        synchronizedLock.executeSynchronizedStaticMethodNotSameObject();
+
         while (true) {
-
         }
     }
 
-    public void executeOneSameObject() {
+    /**
+     * 对于同一个对象, synchronized代码块的锁仅对当前对象生效，锁生效, 串行处理
+     * */
+    public void executeSynchronizedCodeSameObject() {
         Client client = new Client();
-        // doRunOne方法使用synchronized修饰代码块, 指定锁定this当前对象
-        // 所有线程使用同一个对象, 10个线程串行处理(等待锁)
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(client::doRunOne);
-            thread.start();
-        }
+
+        Thread thread1 = new Thread(client::doSynchronizedCode);
+        thread1.start();
+
+        Thread thread2 = new Thread(client::doSynchronizedCode);
+        thread2.start();
     }
 
-    public void executeOneAloneObject() {
-        // doRunOne方法使用synchronized修饰代码块, 指定锁定this当前对象
-        // 但是每个线程都创建了一个新的对象, 锁针对于每个对象. 10个线程并行处理
-        for (int i = 0; i < 10; i++) {
-            Client client = new Client();
-            Thread thread = new Thread(client::doRunOne);
-            thread.start();
-        }
+    /**
+     * 对于不同对象, synchronized代码块的锁仅对当前对象生效. 两个线程间不发生锁争抢, 并行处理
+     * */
+    public void executeSynchronizedCodeNotSameObject() {
+        Client client1 = new Client();
+        Thread thread1 = new Thread(client1::doSynchronizedCode);
+        thread1.start();
+
+        Client client2 = new Client();
+        Thread thread2 = new Thread(client2::doSynchronizedCode);
+        thread2.start();
     }
 
-    public void executeTwoSameObject() {
+    /**
+     * 对于同一个对象, synchronized修饰方法, 锁仅对当前对象生效，锁生效, 串行处理
+     * */
+    public void executeSynchronizedMethodSameObject() {
         Client client = new Client();
-        // doRunOne方法和doRunTwo使用synchronized修饰
-        // 会导致互相抢锁, 两个方法只能同时有1个执行, 20个线程串行执行
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(client::doRunOne);
-            thread.start();
-        }
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(client::doRunTwo);
-            thread.start();
-        }
-        // doRunFour方法是一个没有synchronized修饰的正常方法, 不受锁影响
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(client::doRunFour);
-            thread.start();
-        }
+
+        Thread thread1 = new Thread(client::doSynchronizedMethod);
+        thread1.start();
+
+        Thread thread2 = new Thread(client::doSynchronizedMethod);
+        thread2.start();
     }
 
-    public void executeThreeSameObject() {
-        // doRunOne方法和doRunTwo使用synchronized修饰
-        // 会导致互相抢锁, 两个方法只能同时有1个执行, 20个线程串行执行
-        for (int i = 0; i < 10; i++) {
-            Client client = new Client();
-            Thread thread = new Thread(client::doRunOne);
-            thread.start();
-        }
-        for (int i = 0; i < 10; i++) {
-            Client client = new Client();
-            Thread thread = new Thread(client::doRunTwo);
-            thread.start();
-        }
-        // doRunFour方法是一个没有synchronized修饰的正常方法, 不受锁影响
-        for (int i = 0; i < 10; i++) {
-            Client client = new Client();
-            Thread thread = new Thread(client::doRunFour);
-            thread.start();
-        }
+    /**
+     * 对于不同对象, synchronized修饰方法. 锁仅对当前对象生效, 并行处理
+     * */
+    public void executeSynchronizedMethodNotSameObject() {
+        Client client1 = new Client();
+        Thread thread1 = new Thread(client1::doSynchronizedMethod);
+        thread1.start();
+
+        Client client2 = new Client();
+        Thread thread2 = new Thread(client2::doSynchronizedMethod);
+        thread2.start();
     }
 
-    public void executeFiveSameObject() {
-        // doRunThree和doRunFive使用synchronized修饰的静态方法
-        // 锁是类锁, 20个线程串行执行
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(Client::doRunThree);
-            thread.start();
-        }
-        for (int i = 0; i < 10; i++) {
-            Thread thread = new Thread(Client::doRunFive);
-            thread.start();
-        }
-        for (int i = 0; i < 10; i++) {
-            Client client = new Client();
-            Thread thread = new Thread(client::doRunFour);
-            thread.start();
-        }
+    /**
+     * synchronized修饰静态方法, 与对象无关, 锁对当前类生效, 锁对这个类的所有对象的synchronized静态方法都会生效, 其他方法不受影响
+     * */
+    public void executeSynchronizedStaticMethod() {
+        Thread thread1 = new Thread(Client::doSynchronizedStaticMethod);
+        thread1.start();
+
+        Thread thread2 = new Thread(Client::doSynchronizedStaticMethod);
+        thread2.start();
+    }
+
+    /**
+     * synchronized修饰静态方法, 与对象无关, 锁对当前类生效, 锁对这个类的所有对象的synchronized静态方法都会生效, 其他方法不受影响
+     * */
+    public void executeSynchronizedStaticMethodNotSameObject() {
+        Client client1 = new Client();
+        Thread thread1 = new Thread(client1::executeSynchronizedStaticMethod);
+        thread1.start();
+
+        Client client2 = new Client();
+        Thread thread2 = new Thread(client2::executeSynchronizedStaticMethod);
+        thread2.start();
     }
 }
